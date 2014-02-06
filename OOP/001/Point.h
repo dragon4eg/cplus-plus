@@ -1,11 +1,6 @@
 //#define NDEBUG
-#ifndef _POINT_H_
-
-#define _POINT_H_
-
+#pragma once
 #include <iostream>
-
-using namespace std;
 
 //*******************************************
 //Every point posesses its unique ID.
@@ -21,12 +16,12 @@ using namespace std;
 class Point
 {
 	private:
-		static int freeID;
-		const int pointID;
+		static int _freeID;
+		const int _pointID;
 		double _x;
 		double _y;
 	public:
-		Point (double x=0, double y=0);
+		explicit Point (double x=0, double y=0);
 		Point (const Point &);
 		~Point();
 		Point& operator=(const Point &);
@@ -35,12 +30,11 @@ class Point
 		const double& x()const;
 		const double& y()const;
 		const int getID() const;
-		static int amount();
+		static int freeID();
 };
 
-ostream& operator<<(ostream&, const Point&);
+std::ostream& operator<<(std::ostream&, const Point&);
 const Point operator+ (const Point & u, const Point & v);
-Point& operator+=(Point &, const Point&);
-bool operator==(const Point & u, const Point &v);
-bool operator!=(const Point & u, const Point &v);
-#endif
+const Point& operator+=(Point &, const Point&);
+const bool operator==(const Point & u, const Point &v);
+const bool operator!=(const Point & u, const Point &v);

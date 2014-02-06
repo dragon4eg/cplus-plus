@@ -3,26 +3,26 @@
 
 int main ()
 {
-	std::cout << std::boolalpha << true<<endl;
+	std::cout << std::boolalpha << true<<std::endl;
 	Point a;
-	cout<<"cout a:"<<a<<endl;
+	std::cout<<"cout a:"<<a<<std::endl;
 	Point b(1,1);
-	cout<<"temp sum: "<<a+b<<endl;
-	cout<<"cout a:"<<a<<endl;
+	std::cout<<"temp sum: "<<a+b<<std::endl;
+	std::cout<<"cout a:"<<a<<std::endl;
 	Point c(a);
-	cout<<"cout c:"<<c<<endl;
+	std::cout<<"cout c:"<<c<<std::endl;
 
-	cout<<"a == c : "<< (a==c) << endl;
+	std::cout<<"a == c : "<< (a==c) << std::endl;
 
 	a+=b;
-	cout<<a<<endl;
+	std::cout<<a<<std::endl;
 
-	cout<<"a == c : "<< (a==c)<<endl;
-	cout<<"a == b : "<< (a==b)<<endl;
+	std::cout<<"a == c : "<< (a==c)<<std::endl;
+	std::cout<<"a == b : "<< (a==b)<<std::endl;
 	a+=b+c;
-	cout<<a<<endl;
+	std::cout<<a<<std::endl;
 
-	cout<<"a!=b : "<< (a!=b) <<endl;
+	std::cout<<"a!=b : "<< (a!=b) <<std::endl;
 	return 0;
 }
 
