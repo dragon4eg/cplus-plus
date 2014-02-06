@@ -16,7 +16,6 @@ Point::Point (const Point & u): _pointID(++_freeID), _x(u.x()), _y(u.y())
 
 Point::~Point ()
 {
-
 #ifdef NDEBUG
 	cout<<_pointID<<": deleted "<<*this<<std::endl;
 #endif
