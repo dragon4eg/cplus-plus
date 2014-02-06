@@ -3,7 +3,6 @@ int Point::_freeID = 0;
 
 Point::Point (double x, double y): _x(x), _y(y), _pointID(++_freeID)
 {
-	
 #ifdef NDEBUG
 	cout<<_pointID<<": created "<<*this<<std::endl;
 #endif
