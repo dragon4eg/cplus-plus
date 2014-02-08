@@ -35,6 +35,6 @@ class Point
 
 std::ostream& operator<<(std::ostream&, const Point&);
 const Point operator+ (const Point & u, const Point & v);
-const Point& operator+=(Point &, const Point&);
+Point& operator+=(Point &, const Point&);
 const bool operator==(const Point & u, const Point &v);
 const bool operator!=(const Point & u, const Point &v);

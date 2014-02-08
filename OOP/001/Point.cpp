@@ -26,8 +26,8 @@ Point::~Point ()
 
 Point& Point::operator=(const Point & u)
 {
-	this->_x = u.x();
-	this->_y = u.y();
+	this->x() = u.x();
+	this->y() = u.y();
 	return *this;
 }
 
@@ -54,7 +54,7 @@ const Point operator+ (const Point & u, const Point & v)
 	return Point (u.x()+v.x(), u.y()+v.y());
 }
 
-const Point& operator+=(Point & u, const Point & v)
+Point& operator+=(Point & u, const Point & v)
 {
 	u = u + v;
 	return u;
