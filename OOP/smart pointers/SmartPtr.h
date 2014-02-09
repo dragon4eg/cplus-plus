@@ -11,6 +11,7 @@ template <typename T> class SmartPtr
 		}
 		SmartPtr(const SmartPtr<T>& smart): _pointee(smart._pointee) 
 		{
+		//я вже поняв шо ХУЙНЯ	
 			smart._pointee = 0;
 		}
 		~SmartPtr()
