@@ -4,36 +4,23 @@ template <typename T> class SmartPtr
 {
 	private:
 		T* _pointee;
-		RefCounter* _count;
 	public:
-		explicit SmartPtr(): _pointee(0), _count(0)
+		explicit SmartPtr(T* pointee = 0): _pointee(pointee)
 		{
-			_count = new RefCounter;
-			_count->addRef();
+			return;
 		}
-		explicit SmartPtr(T* pointee = 0): _pointee(pointee), _count(0)
+		SmartPtr(const SmartPtr<T>& smart): _pointee(smart._pointee) 
 		{
-			_count = new RefCounter;
-			_count->addRef();
-		}
-		SmartPtr(const SmartPtr<T>& smart): _pointee(smart._pointee), _count(smart._count)
-		{
-			_count->addRef();
+			smart._pointee = 0;
 		}
 		~SmartPtr()
 		{
-			if (_count->Release() == 0)
-			{
-				delete _pointee;
-				delete _count;
-			}
+			delete _pointee;
 		}
-		SmartPtr<T>& operator=(const SmartPtr<T>& someSmartPtr)
+		SmartPtr<T>& operator=(const SmartPtr<T>& smart)
 		{
-			//some conditions should exist for allowing freely do the next copying;
-			_pointee = someSmartPtr._pointee;
-			_count = someSmartPtr._count;
-			_count->addRef();
+			_pointee = smart._pointee;
+			smart._pointee = 0;
 			return *this;
 		}
 
@@ -50,24 +37,3 @@ template <typename T> class SmartPtr
 /*********************************** friend operators **************************************/
 /* == != < > >= <= we need just < and == for all others to implement; isNULL sort of...*/
 
-
-/******************* reference counter holder class ****************************************/
-class RefCounter
-{
-	private:
-		size_t _count;
-	public:
-		size_t count()
-		{
-			return _count;
-		}
-		void addRef()
-		{
-			++count();
-			return; 
-		}
-		size_t Release()
-		{
-			return --count();
-		}
-};
