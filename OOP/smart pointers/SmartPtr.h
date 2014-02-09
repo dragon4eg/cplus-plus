@@ -11,7 +11,6 @@ template <typename T> class SmartPtr
 		}
 		SmartPtr(const SmartPtr<T>& smart): _pointee(smart._pointee) 
 		{
-		//я вже поняв шо ХУЙНЯ	
 			smart._pointee = 0;
 		}
 		~SmartPtr()
@@ -20,6 +19,7 @@ template <typename T> class SmartPtr
 		}
 		SmartPtr<T>& operator=(const SmartPtr<T>& smart)
 		{
+			delete _pointee;
 			_pointee = smart._pointee;
 			smart._pointee = 0;
 			return *this;
