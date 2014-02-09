@@ -19,6 +19,10 @@ template <typename T> class SmartPtr
 		}
 		SmartPtr<T>& operator=(const SmartPtr<T>& smart)
 		{
+			if (this == &smart)
+			{
+				return *this;
+			}
 			delete _pointee;
 			_pointee = smart._pointee;
 			smart._pointee = 0;
