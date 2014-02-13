@@ -2,45 +2,40 @@
 using std::cout;
 using std::endl;
 
-class RefCounter
-{
-	private:
-		unsigned _count;
-	public:
-		void addRef()
-		{
-			++_count;
-		}
-		unsigned decRef()
-		{
-			return --_count;
-		}
-};
-
 template <typename T> class SmartPtr
 {
 	private:		
 		T* _pointee;
-		RefCounter* _count;
-	public:
-		explicit SmartPtr(T* pointee = 0): _pointee(pointee)
+		unsigned* _count;
+		
+		void addRef()
 		{
-			_count=new RefCounter;
-			_count->addRef();
+		++*_count;
+		}
+		unsigned decRef()
+		{
+		return --*_count;
+		}
+	public:
+		explicit SmartPtr( T* const pointee = 0): _pointee(pointee), _count(new unsigned(0))
+		{
+			addRef();
 			return;
 		}
-		SmartPtr(SmartPtr<T>& smart): _pointee(smart._pointee) 
+		SmartPtr(const SmartPtr<T>& smart): _pointee(smart._pointee) 
 		{
-			_count->addRef();
+			addRef();
 		}
 		~SmartPtr()
 		{
-			if(_count->decRef() == 0)
+			if(decRef() == 0)
 			{
 				delete _pointee;
 				delete _count;
+				_pointee = NULL;
+				_count = NULL;
+				
 			}
-			//_count->_count = _count->decRef();
 		}
 		SmartPtr<T>& operator=(SmartPtr<T>& smart)
 		{
@@ -48,17 +43,18 @@ template <typename T> class SmartPtr
 			{
 				return *this;
 			}
-			if (_count->decRef() == 0)
+			if (decRef() == 0)
 			{
 				delete _pointee;
+				_pointee = NULL;
 				cout<<"The pointer you assign to was the last for his object. Old object deleted"<<endl;
 			}
 			_pointee = smart._pointee; 
-			smart._count->addRef();
+			smart.addRef();
 			_count = smart._count;
 			return *this;
 		}
-		const T* showPointee() const
+		const T* const showPointee() const
 		{
 			return _pointee;
 		}
@@ -70,7 +66,9 @@ template <typename T> class SmartPtr
 		{
 			return _pointee;
 		}
+
 };
+
 
 
 /*********************************** friend operators **************************************/

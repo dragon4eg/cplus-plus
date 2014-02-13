@@ -4,11 +4,10 @@
 using std::cout;
 using std::endl;
 
-
 int main()
 {
 	SmartPtr<Reporter>spr(new Reporter);
-	cout<<sprshowPointee()<<endl;
+	cout<<spr.showPointee()<<endl;
 	Reporter::report();
 	cout<<endl;
 	{
