@@ -1,4 +1,6 @@
 #pragma once
+#include <cstddef>
+#include <cassert>
 using std::cout;
 using std::endl;
 
@@ -7,14 +9,22 @@ template <typename T> class SmartPtr
 	private:		
 		T* _pointee;
 		unsigned* _count;
-		
+
+		T* pointee()
+                {
+                        return _pointee;
+                }
+                unsigned* count()
+                {
+                        return _count;
+                }
 		void addRef()
 		{
-		++*_count;
+		        ++*count();
 		}
 		unsigned decRef()
 		{
-		return --*_count;
+		        return --*count();
 		}
 	public:
 		explicit SmartPtr( T* const pointee = 0): _pointee(pointee), _count(new unsigned(0))
@@ -25,6 +35,7 @@ template <typename T> class SmartPtr
 		SmartPtr(const SmartPtr<T>& smart): _pointee(smart._pointee) 
 		{
 			addRef();
+                        assert(smart.pointee() == NULL);
 		}
 		~SmartPtr()
 		{
@@ -46,25 +57,26 @@ template <typename T> class SmartPtr
 			if (decRef() == 0)
 			{
 				delete _pointee;
-				_pointee = NULL;
+				pointee() = NULL;
 				cout<<"The pointer you assign to was the last for his object. Old object deleted"<<endl;
 			}
-			_pointee = smart._pointee; 
+			pointee() = smart.pointee(); 
 			smart.addRef();
-			_count = smart._count;
+			count() = smart.count();
 			return *this;
 		}
-		const T* const showPointee() const
+                const 
+		const T* const pointee() const
 		{
 			return _pointee;
 		}
-		T& operator*() const //return the &object but not change it with this operator;
+		T& operator*() const
 		{	
-			return *_pointee;
+			return *pointee();
 		}
 		T* operator->() const
 		{
-			return _pointee;
+			return pointee();
 		}
 
 };
@@ -73,4 +85,3 @@ template <typename T> class SmartPtr
 
 /*********************************** friend operators **************************************/
 /* == != < > >= <= we need just < and == for all others to implement; isNULL sort of...*/
-
