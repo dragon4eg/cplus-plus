@@ -10,42 +10,58 @@ template <typename T> class SmartPtr
 		T* _pointee;
 		unsigned* _count;
 
-		T* pointee()
-                {
-                        return _pointee;
-                }
-                unsigned* count()
-                {
-                        return _count;
-                }
+		T* pointee(){ return _pointee; }
+                unsigned* count(){ return _count; }
 		void addRef()
 		{
 		        ++*count();
 		}
-		unsigned decRef()
+		void decRef()
 		{
 		        return --*count();
 		}
 	public:
-		explicit SmartPtr( T* const pointee = 0): _pointee(pointee), _count(new unsigned(0))
+		explicit SmartPtr( T* const pointee = NULL): _pointee(pointee), _count(new unsigned(0))
 		{
-			addRef();
-			return;
+			if (isNull())
+			{
+				return;
+			}
+			else
+			{
+				addRef();
+				return;
+			}
 		}
-		SmartPtr(const SmartPtr<T>& smart): _pointee(smart._pointee) 
-		{
-			addRef();
-                        assert(smart.pointee() == NULL);
+		SmartPtr(const SmartPtr<T>& smart): _pointee(smart._pointee), _count(new unsigned(0)) 
+		{	
+			if (smart.isNull())
+			{
+				return;
+			}	
+			else
+			{
+				delete *count();
+				count() = smart.count();
+				addRef();
+				return;
+			}
 		}
+
+		//we do not need to delete NULLpointers;
 		~SmartPtr()
 		{
-			if(decRef() == 0)
+			if(*count() == 1)
 			{
 				delete _pointee;
 				delete _count;
 				_pointee = NULL;
 				_count = NULL;
 				
+			}
+			else
+			{
+				decRef();
 			}
 		}
 		SmartPtr<T>& operator=(SmartPtr<T>& smart)
@@ -54,29 +70,34 @@ template <typename T> class SmartPtr
 			{
 				return *this;
 			}
-			if (decRef() == 0)
+			if (count() == 1)
 			{
-				delete _pointee;
+				delete pointee();
 				pointee() = NULL;
 				cout<<"The pointer you assign to was the last for his object. Old object deleted"<<endl;
 			}
+			decRef();
 			pointee() = smart.pointee(); 
 			smart.addRef();
 			count() = smart.count();
 			return *this;
 		}
-                const 
 		const T* const pointee() const
 		{
 			return _pointee;
 		}
 		T& operator*() const
 		{	
+			assert(pointee() == 0);// we can not dereference nullptr
 			return *pointee();
 		}
 		T* operator->() const
 		{
 			return pointee();
+		}
+		const bool isNull() cosnt 
+		{
+			return pointee() == NULL;
 		}
 
 };
