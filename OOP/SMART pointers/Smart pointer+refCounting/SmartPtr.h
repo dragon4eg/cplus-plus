@@ -6,19 +6,23 @@ using std::endl;
 
 template <typename T> class SmartPtr
 {
-	private:		
+	private:	
 		T* _pointee;
 		unsigned* _count;
 
 		T* pointee(){ return _pointee; }
-                unsigned* count(){ return _count; }
-		void addRef()
+		unsigned* count(){ return _count; }
+		void addRef(){ ++*count(); }
+		void decRef(){ --*count(); }
+		const bool checkEqualCondition(const SmartPtr<T>& lhs, SmartPtr<T>& rhs)
 		{
-		        ++*count();
+			return (lhs.pointee()==rhs.pointee() && lhs.count()==rhs.count());
 		}
-		void decRef()
+		void setFromTo(SmartPtr<T>& lhs, SmartPtr<T>& rhs)
 		{
-		        return --*count();
+			rhs.pointee() = lhs.pointee();
+			rhs.count() = lhs.count();
+			lhs.addRef();
 		}
 	public:
 		explicit SmartPtr( T* const pointee = NULL): _pointee(pointee), _count(new unsigned(0))
@@ -41,9 +45,9 @@ template <typename T> class SmartPtr
 			}	
 			else
 			{
-				delete *count();
-				count() = smart.count();
-				addRef();
+				delete _count;
+				setFromTo(smart, *this);
+				assert(checkEqualCondition(*this, smart));
 				return;
 			}
 		}
@@ -51,13 +55,10 @@ template <typename T> class SmartPtr
 		//we do not need to delete NULLpointers;
 		~SmartPtr()
 		{
-			if(*count() == 1)
+			if(*_count == 1)//if this is the last smart pointer to some object
 			{
 				delete _pointee;
 				delete _count;
-				_pointee = NULL;
-				_count = NULL;
-				
 			}
 			else
 			{
@@ -74,35 +75,50 @@ template <typename T> class SmartPtr
 			{
 				delete pointee();
 				pointee() = NULL;
-				cout<<"The pointer you assign to was the last for his object. Old object deleted"<<endl;
+				#ifdef DEBUG
+					cout<<"The pointer you assign to was the last for his object. Old object deleted"<<endl;
+				#endif
+			}
+			if(count() == 0)
+			{
+				assert(smart.isNull());
+				setFromTo(smart,*this);
+				return;
 			}
 			decRef();
-			pointee() = smart.pointee(); 
-			smart.addRef();
-			count() = smart.count();
+			setFromTo(smart, *this);
+			assert(checkEqualCondition(*this, smart));
 			return *this;
 		}
+
 		const T* const pointee() const
 		{
 			return _pointee;
 		}
 		T& operator*() const
 		{	
-			assert(pointee() == 0);// we can not dereference nullptr
+			assert(!isNull());// we can not dereference nullptr
 			return *pointee();
 		}
 		T* operator->() const
 		{
 			return pointee();
 		}
-		const bool isNull() cosnt 
+		const bool isNull() const
 		{
 			return pointee() == NULL;
 		}
-
 };
 
+template <typename T>
+const bool operator==(SmartPtr<T>& lhs, SmartPtr<T>& rhs)
+{
+	return lhs.pointee() == rhs.pointee();
+}
 
-
-/*********************************** friend operators **************************************/
-/* == != < > >= <= we need just < and == for all others to implement; isNULL sort of...*/
+template <typename T>
+const bool operator!=(SmartPtr<T>& lhs, SmartPtr<T>& rhs)
+{
+	return !(lhs == rhs);
+}
+/*->"	 " - this is  tabulation symbol for pasting on ipad*/
