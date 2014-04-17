@@ -32,6 +32,7 @@ private:
 
 const bool operator==(const Point & a, const Point & b);
 ostream & operator<<(ostream & os, const Point & p);
+const string to_string (Point p);
 /********************************************************************************************/
 class Segment
 {
@@ -48,29 +49,44 @@ private:
 	Point start_, end_;
 };
 ostream & operator<<(ostream & os, const Segment & s);
+const string to_string (Segment s);
+
+class AnswerItem
+{
+public:
+	AnswerItem(): message_(""), number_(0) { }
+	AnswerItem(const string message, const int number);
+	virtual ~AnswerItem() { }
+	const string getMessage() const;
+	const int getNumber() const;
+	void putMessage(const string msg) { message_ = msg; }
+	void putNumber(const int num) { number_ = num; }
+private:
+	string message_;
+	int	number_;
+};
+/********************************************************************************************/
+class WorkItem : public AnswerItem
+{
+public:
+	WorkItem(const string message, const int number, wqueue<AnswerItem*>* ans_queue);
+	wqueue<AnswerItem*>* getAnsQueue() const {return ans_queue_ ;}
+private:
+	wqueue<AnswerItem*>* ans_queue_;
+};
 /********************************************************************************************/
 namespace Operations
 {	//auxilary
 	void parseAndInit(const string & message, Segment & s);
-	void solve(const Segment & s, const SegmentSet & db, SegmentSet::iterator iter);
-	const bool dbEmpty (const SegmentSet & db);
+	const bool dbEmpty (const SegmentSet &, wqueue<AnswerItem*>*const, const int);
+	void solve(const Segment & s, const SegmentSet & db, SegmentSet::iterator iter, wqueue<AnswerItem*>*const, const int);
+
 	//main
-	void make(const string & message, Segment & s, SegmentSet & db);
-	void remove(const string & message, Segment & s, SegmentSet & db);
-	void find(const string & message, Segment & s, SegmentSet & db);
+	void make(const string &, Segment &, SegmentSet &, wqueue<AnswerItem*>*const, const int);
+	void remove(const string &, Segment &, SegmentSet &, wqueue<AnswerItem*>*const, const int);
+	void find(const string &, Segment &, SegmentSet &, wqueue<AnswerItem*>*const, const int);
 }
-
-class WorkItem
-{
-public:
-	WorkItem(string message, int number);
-	const string getMessage();
-	int getNumber();
-	private:
-	string message_;
-	int	number_;
-};
-
+/********************************************************************************************/
 class Thread
 {
 public:
@@ -83,8 +99,8 @@ public:
 	virtual void* run() = 0;  
 private:
 	pthread_t  m_tid;
-	int		m_running;
-	int		m_detached;
+	int 	   m_running;
+	int 	   m_detached;
 };
 
 class ProcThread : public Thread
