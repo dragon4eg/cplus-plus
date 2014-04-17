@@ -12,8 +12,7 @@ int main ()
 	ProcThread* processor = new ProcThread(queue, db);
 	processor->start();
 /*******************************Socket************************************************/	
-	int c;
-	int socket_desc, new_socket, *new_sock;
+	int socket_desc, new_socket, *new_sock, c;
 	sockaddr_in server, client;
 	string message, quit;
 	socket_desc = socket(AF_INET, SOCK_STREAM, 0);
@@ -21,10 +20,9 @@ int main ()
 	{
 		cout<<"Could not create socket\n";
 	}
-	
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_family = AF_INET;
-	server.sin_port = htons( 9797 );//port
+	server.sin_port = htons( 80 );//listening port for clients
 	if( bind(socket_desc,(struct sockaddr *)&server, sizeof(server)) < 0)
 	{
 		cout<<"Bind failed\n";
@@ -64,6 +62,7 @@ int main ()
 		cerr<<"accept failed\n";
 	}
 /*************************************************************************************/
+	close(socket_desc);
 	db.clear();
 	return 0;
 }
