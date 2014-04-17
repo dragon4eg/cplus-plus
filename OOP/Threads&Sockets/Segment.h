@@ -1,0 +1,114 @@
+#ifndef __segment_h__
+#define __segment_h__
+
+#include <string>
+#include <memory>
+#include <iostream>
+#include <map>
+//#include <stdlib.h>
+#include <algorithm>
+#include "wqueue.h"
+#include <sys/socket.h>
+#include <arpa/inet.h> //inet_addr
+//#include <netdb.h> //hostent
+#include <unistd.h>    //write
+
+//#include <pthread.h>
+
+using namespace std;
+class Segment;
+typedef multimap<int, Segment> SegmentSet; 
+class Point
+{
+public:
+	Point(const int x = 0): x_(x) { }
+	Point(const Point & p): x_(p.x()) { }
+	const int & x() const { return x_;}
+	int & x() { return x_;}
+	Point & operator= (Point & p);
+private:
+	int x_;
+};
+
+const bool operator==(const Point & a, const Point & b);
+ostream & operator<<(ostream & os, const Point & p);
+/********************************************************************************************/
+class Segment
+{
+public:
+	Segment(): start_ (Point()), end_(Point()) {}
+	Segment(const Point a, const Point b = Point());
+	Segment(const Segment & s);
+	const Point & start() const { return start_; }
+	const Point & end() const { return end_; }
+	Point & start() { return start_; }
+	Point & end() { return end_; }
+	const int length();
+private:
+	Point start_, end_;
+};
+ostream & operator<<(ostream & os, const Segment & s);
+/********************************************************************************************/
+namespace Operations
+{	//auxilary
+	void parseAndInit(const string & message, Segment & s);
+	void solve(const Segment & s, const SegmentSet & db, SegmentSet::iterator iter);
+	const bool dbEmpty (const SegmentSet & db);
+	//main
+	void make(const string & message, Segment & s, SegmentSet & db);
+	void remove(const string & message, Segment & s, SegmentSet & db);
+	void find(const string & message, Segment & s, SegmentSet & db);
+}
+
+class WorkItem
+{
+public:
+    WorkItem(string message, int number);
+    const string getMessage();
+    int getNumber();
+    private:
+    string message_;
+    int    number_;
+};
+
+class Thread
+{
+public:
+	Thread();
+	virtual ~Thread();
+	int start();
+	int join();
+	int detach();
+	pthread_t self(); 
+	virtual void* run() = 0;  
+private:
+	pthread_t  m_tid;
+	int        m_running;
+	int        m_detached;
+};
+
+class ProcThread : public Thread
+{
+private:
+ 	wqueue<WorkItem*>& queue_;
+ 	SegmentSet& db_;
+public:
+	ProcThread(wqueue<WorkItem*>&, SegmentSet&);
+	void* run();
+};
+
+class ListenThread : public Thread
+{
+private:
+ 	wqueue<WorkItem*>/*&*/ * queue_;
+ 	int* socket_;
+public:
+	ListenThread(wqueue<WorkItem*>/*&*/ *, int*);
+	void* run();
+};
+
+
+#endif  
+
+
+
