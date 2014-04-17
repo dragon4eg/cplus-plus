@@ -210,7 +210,7 @@ void* ProcThread::run()
 				break;
 			case 'r': Operations::remove(msg, tmps, db_, ans_queue, listener_id);
 				break;
-			default: write(new_socket, info.c_str(), info.length());
+			default: //handle ather inputs
 				break;
 		}
 	cout<<"Processor: "<<(long unsigned int)self()<<" on loop "<<i<<", got one item:\n";
