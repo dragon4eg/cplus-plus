@@ -23,7 +23,7 @@ int main ()
 	
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_family = AF_INET;
-	server.sin_port = htons( 8998 );//port
+	server.sin_port = htons( 9898 );//port
 	if( bind(socket_desc,(struct sockaddr *)&server, sizeof(server)) < 0)
 	{
 		cout<<"Bind failed\n";
@@ -46,14 +46,15 @@ int main ()
 		cout<<"Clients ip is: "<<client_ip<<" port: "<<client_port<<'\n';
 		new_sock = new int(new_socket);
 		//new_sock = malloc(1);
- 	//*new_sock = new_socket;
+		//*new_sock = new_socket;
 		ListenThread* listener = new ListenThread(&queue, new_sock);//here in constructor I 
 		//have a question as I give wqueue<WorkItem*>& both to ProcessorThread and 
 		//Listener thread, can both of rhem own one object or should I pass a pointer to 
 		//a Listener thread (I've tested this, it probebly doesnt matter)
-		if (listener->start()/*returns 0 if OK*/)
+		if (listener->start()< 0 /*returns 0 if OK*/)
 		{
 			cout<<"could not create listener thread!!!\n";
+			return 1;
 		}
 		
 	}

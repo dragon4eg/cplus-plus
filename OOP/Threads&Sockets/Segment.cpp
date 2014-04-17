@@ -194,7 +194,7 @@ void* ListenThread::run()
 			message = client_message;//this is OK
 			WorkItem* item = new WorkItem(message, self());//procThread deletes used item
 			(*queue_).add(item);//send the copy of a pointer to the WorkQueue
-			delete item;
+			//delete item; AHAH this was the reason for SEGMENTATION FAULT
 		}
 	}
 	delete socket_;
