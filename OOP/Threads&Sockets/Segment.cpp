@@ -3,8 +3,8 @@
 /**************************************Point******************************************/
 Point & Point::operator= (Point & p)
 {
-       	x_ = p.x();
-       	return *this;
+	x_ = p.x();
+	return *this;
 }
 const bool operator==(const Point & a, const Point & b)
 {
@@ -18,11 +18,11 @@ ostream & operator<<(ostream & os, const Point & p)
 
 /**************************************Segment******************************************/
 Segment::Segment(const Point a, const Point b /* = Point() */):
-       	start_(a), 
+	start_(a), 
 	end_(b) 
 { }
 Segment::Segment(const Segment & s):
-       	start_(s.start()), 
+	start_(s.start()), 
 	end_(s.end()) 
 { }
 const int Segment::length()

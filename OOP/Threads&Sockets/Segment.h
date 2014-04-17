@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h> //inet_addr
 //#include <netdb.h> //hostent
-#include <unistd.h>    //write
+#include <unistd.h>	//write
 
 //#include <pthread.h>
 
@@ -63,12 +63,12 @@ namespace Operations
 class WorkItem
 {
 public:
-    WorkItem(string message, int number);
-    const string getMessage();
-    int getNumber();
-    private:
-    string message_;
-    int    number_;
+	WorkItem(string message, int number);
+	const string getMessage();
+	int getNumber();
+	private:
+	string message_;
+	int	number_;
 };
 
 class Thread
@@ -83,8 +83,8 @@ public:
 	virtual void* run() = 0;  
 private:
 	pthread_t  m_tid;
-	int        m_running;
-	int        m_detached;
+	int		m_running;
+	int		m_detached;
 };
 
 class ProcThread : public Thread

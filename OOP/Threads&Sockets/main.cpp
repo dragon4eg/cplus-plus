@@ -46,7 +46,7 @@ int main ()
 		cout<<"Clients ip is: "<<client_ip<<" port: "<<client_port<<'\n';
 		new_sock = new int(new_socket);
 		//new_sock = malloc(1);
-        	//*new_sock = new_socket;
+ 	//*new_sock = new_socket;
 		ListenThread* listener = new ListenThread(&queue, new_sock);//here in constructor I 
 		//have a question as I give wqueue<WorkItem*>& both to ProcessorThread and 
 		//Listener thread, can both of rhem own one object or should I pass a pointer to 
