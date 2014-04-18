@@ -1,8 +1,4 @@
-//#include <stdio.h>
-//#include <stdlib.h>
 #include "Segment.h"
-//using namespace std;
-
 
 int main ()
 {
@@ -22,14 +18,17 @@ int main ()
 	}
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_family = AF_INET;
-	server.sin_port = htons( 80 );//listening port for clients
+	server.sin_port = htons( 7897 );//listening port for clients
+	
 	if( bind(socket_desc,(struct sockaddr *)&server, sizeof(server)) < 0)
 	{
 		cout<<"Bind failed\n";
 	}
 	cout<<"Bind done\n";
-	listen(socket_desc , 3); //3 is The backlog argument defines the maximum length to which the queue of pending connections for sockfd may grow
+	listen(socket_desc , 3); //3 is The backlog argument defines the maximum length 
+	//to which the queue of pending connections for sockfd may grow
 	cout<<"Waiting for incoming connections...\n";
+	
 	c = sizeof(struct sockaddr_in);
 	message = "Hello Client, I have received your connection.\n";	
 	while( (new_socket = accept(socket_desc, (sockaddr *)&client, (socklen_t*)&c)) )
@@ -44,12 +43,9 @@ int main ()
 		write(new_socket, info.c_str(), info.length());
 		cout<<"Clients ip is: "<<client_ip<<" port: "<<client_port<<'\n';
 		new_sock = new int(new_socket);
-		//new_sock = malloc(1);
-		//*new_sock = new_socket;
-		ListenThread* listener = new ListenThread(&queue, new_sock);//here in constructor I 
-		//have a question as I give wqueue<WorkItem*>& both to ProcessorThread and 
-		//Listener thread, can both of rhem own one object or should I pass a pointer to 
-		//a Listener thread (I've tested this, it probebly doesnt matter)
+		//Listener delets this new_sock
+		ListenThread* listener = new ListenThread(&queue, new_sock);
+		//we still need another socket to shut down servevr and delete this pointer
 		if (listener->start()< 0 /*returns 0 if OK*/)
 		{
 			cout<<"could not create listener thread!!!\n";
@@ -62,6 +58,7 @@ int main ()
 		cerr<<"accept failed\n";
 	}
 /*************************************************************************************/
+	delete processor;
 	close(socket_desc);
 	db.clear();
 	return 0;

@@ -1,19 +1,16 @@
 #ifndef __segment_h__
 #define __segment_h__
 
+#include "wqueue.h"
 #include <string>
 #include <memory>
 #include <iostream>
 #include <map>
-//#include <stdlib.h>
 #include <algorithm>
-#include "wqueue.h"
 #include <sys/socket.h>
 #include <arpa/inet.h> //inet_addr
 //#include <netdb.h> //hostent
 #include <unistd.h>	//write
-
-//#include <pthread.h>
 
 using namespace std;
 class Segment;
@@ -76,11 +73,10 @@ private:
 };
 /********************************************************************************************/
 namespace Operations
-{	//auxilary
+{	//auxiliary
 	void parseAndInit(const string & message, Segment & s);
-	const bool dbEmpty (const SegmentSet &, wqueue<AnswerItem*>*const, const int);
-	void solve(const Segment & s, const SegmentSet & db, SegmentSet::iterator iter, wqueue<AnswerItem*>*const, const int);
-
+	//const bool dbEmpty (const SegmentSet &);
+	void solve(const Segment & s, const SegmentSet & db, SegmentSet::iterator iter, AnswerItem*const);
 	//main
 	void make(const string &, Segment &, SegmentSet &, wqueue<AnswerItem*>*const, const int);
 	void remove(const string &, Segment &, SegmentSet &, wqueue<AnswerItem*>*const, const int);
