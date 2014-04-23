@@ -1,0 +1,16 @@
+Enter command and segment or type quit: 
+fn[0;0]
+Empty set!
+Enter command and segment or type quit: 
+mk[2;9]
+Segment added!
+Enter command and segment or type quit: 
+fn[3;8]
+Solved! Segment [2;9] includes [3;8]
+Enter command and segment or type quit: 
+mk[2;7]
+Segment added!
+Enter command and segment or type quit: 
+fn[3;8]
+There is no segment...
+
