@@ -30,7 +30,7 @@ int main ()
     }
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_family = AF_INET;
-    server.sin_port = htons( 8086 );//listening port for clients
+    server.sin_port = htons( 8087 );//listening port for clients
     
     if( bind(socket_desc,(sockaddr *)&server, sizeof(server)) < 0)
     {

@@ -34,7 +34,8 @@ void ProcThread::run()
             default: //handle other inputs
                 break;
         }
-    cout<<"Processor: "<<std::this_thread::get_id()<<" on loop "<<i<<", got one item:\nmessage: "<<msg<<"from connection: "<<listener_id<<'\n';
+        cout<<msg<<'\n';
+        cout<<"Processor: "<<std::this_thread::get_id()<<" on loop "<<i<<", got one item:\nmessage: "<<msg<<"from connection: "<<listener_id<<'\n';
     
     delete item;
     }
