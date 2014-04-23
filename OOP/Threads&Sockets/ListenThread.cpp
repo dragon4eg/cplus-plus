@@ -24,8 +24,8 @@ void ListenThread::killMeSoftly(PCqueue<AnswerItem*> & answer_queue)
 void ListenThread::run()
 {
     PCqueue<AnswerItem*> answer_queue;
-    int sock = socket_;//*(int*)socket_;
-    string error, talk, answ, string_message;
+    int bytes_read, sock = socket_;//*(int*)socket_;
+    string error, talk, answ;//, string_message;
     stringstream message;
     const size_t maxMsgLen = 25;
     char chk, client_message[maxMsgLen];
@@ -34,7 +34,7 @@ void ListenThread::run()
     write(sock, message.str().c_str(), message.str().length());
     while( workable_ )
     {
-        if( recv(sock, client_message, maxMsgLen, 0) )//recv returns > 0 if OK
+        if( (bytes_read = recv(sock, client_message, maxMsgLen, 0) > 0) )//recv returns size > 0 if OK
         {
             chk = client_message[0];
             if (chk == 'q')
@@ -51,12 +51,15 @@ void ListenThread::run()
             }
             else
             {
-                string_message = client_message; 
+                string string_message(client_message, client_message + bytes_read);
+                //HERE I NEED TO KNOW THE LENGHT OF CLIENT MESSAGE
+                cout<<"Message was: "<<string_message<<'\n';
+                
                 //ProcThread deletes used item created here://TODO get rid of pointers at all move items
                 WorkItem* item = new WorkItem(string_message, std::this_thread::get_id(), answer_queue);
                 queue_.add(item); //send the copy of a pointer to the WorkQueue
                 
-                const AnswerItem* answer = answer_queue.remove();//wait for answer
+                const AnswerItem * answer = answer_queue.remove();//wait for answer
                 if( answer->getId() != std::this_thread::get_id() )
                 {
                     error = "Error: not this listener's answer queue read! Closing connection!\n";

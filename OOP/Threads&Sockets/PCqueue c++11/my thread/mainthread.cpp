@@ -20,6 +20,13 @@ thread pool[number];
 
 int main()
 {
+    char buf[10];
+    for (auto & i : buf)
+        i = 'a';
+    cout<<"Char *: "<<buf<<'\n';
+    string str(buf, buf + 9);
+    cout<<"String: "<<str<<'\n';
+
     for (size_t i = 0; i<number; ++i)
     {
         pool[i] = thread(Functor(i));
