@@ -24,14 +24,14 @@ public:
         condition_variable condv_;
     }
     ~PCqueue() { }
-    void add(T&& item)
+    void add(T item)
     {
         mutex_.lock();
-        queue_.push_back(item);
+        queue_.push_back(std::move(item));
         condv_.notify_one();
         mutex_.unlock();
     }
-    T&& remove() 
+    T remove() 
     {
         unique_lock<std::mutex> lck (mutex_);
         //If the object currently owns a lock on the managed mutex object, 
@@ -47,7 +47,7 @@ public:
         T item(std::move(const_cast< T& >(queue_.front())));//a NON CONST reference to the first element in the list to support move semantics
         //http://stackoverflow.com/questions/20149471/move-out-element-of-std-priority-queue-in-c11
         queue_.pop_front();
-        return move(item);
+        return item;
     }
     int size() 
     {

@@ -10,7 +10,8 @@ using std::move;
 class ListenThread
 {
 public:
-    ListenThread(PCqueue<WorkItem*> &, int );
+    ListenThread(PCqueue< WorkItem > &, int );
+    // move constructor
     ListenThread(ListenThread && other): 
         queue_(other.queue_), 
         socket_(other.socket_),
@@ -33,8 +34,8 @@ public:
     //is a temporary, but it surely won't reduce the lifetime)
     //so the above destructor will not affect the PCqueue<WorkItem*> itself
 private:
-    void killMeSoftly(PCqueue<AnswerItem*> &);
-    PCqueue<WorkItem*> & queue_;
+    void killMeSoftly(PCqueue< AnswerItem > &);
+    PCqueue< WorkItem > & queue_;
     int     socket_;
     bool    workable_;
     void    run();

@@ -8,10 +8,10 @@ using std::thread;
 class ProcThread
 {
 private:
-    PCqueue<WorkItem*>& queue_;
+    PCqueue< WorkItem > & queue_;
     SegmentSet& db_;
     void run();
 public:
-    ProcThread(PCqueue< WorkItem * > &, SegmentSet &);
+    ProcThread(PCqueue< WorkItem > &, SegmentSet &);
     void operator()(){ run(); }
 };

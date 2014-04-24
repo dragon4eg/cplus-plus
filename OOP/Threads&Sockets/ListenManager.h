@@ -7,7 +7,7 @@ class ListenManager //Meyers' singleton
 {
 public:
     static ListenManager & instance();
-    void startNewListener (PCqueue<WorkItem*> & wq, int sock);
+    void startNewListener (PCqueue< WorkItem > & wq, int sock);
     void deleteListener(const thread::id keyid);
     ~ListenManager();
 private:

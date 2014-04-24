@@ -6,81 +6,76 @@
 #include <sys/socket.h>
 using std::cout;
 using std::stringstream;
-/*******************************ListenThread***********************************************/
-ListenThread::ListenThread(PCqueue<WorkItem*> & queue, int socket) : queue_(queue), socket_(socket), workable_(true) {}
+using std::move;
+ListenThread::ListenThread(PCqueue< WorkItem > & queue, int socket) : queue_(queue), socket_(socket), workable_(true) {}
 
-void ListenThread::killMeSoftly(PCqueue<AnswerItem*> & answer_queue)
+void ListenThread::killMeSoftly(PCqueue< AnswerItem > & answer_queue)
 {
-    //pass 'q' = "KILLME" to the PCqueue so that the ProcThread
-    //asked the ListenManager to close this thread
-    cout<<"Connection: "<< std::this_thread::get_id() <<" is about to close.\n";
+    //pass 'q' = "KILLME" to the PCqueue so that the ProcThread asked the ListenManager
+    //to close this thread because we can't do this from inside it
+    cout<<"Connection: "<< std::this_thread::get_id() <<" requested closing.\n";
     stringstream message;
     message << "q_KILLME_\n";
-    WorkItem* item = new WorkItem(message.str(), std::this_thread::get_id(), answer_queue);
-    queue_.add(item);                
+    WorkItem item(message.str(), std::this_thread::get_id(), answer_queue);
+    queue_.add(move(item));//WE DON'T NEED std::MOVE since we'll call the only constructor we have and it's not a copy one
     workable_ = false;
 }
-
+/*******************************ListenThrea::run()***********************************************/
 void ListenThread::run()
 {
-    PCqueue<AnswerItem*> answer_queue;
-    int bytes_read, sock = socket_;//*(int*)socket_;
-    string error, talk, answ;//, string_message;
+    PCqueue< AnswerItem > answer_queue;// create my own anser queue
+    int bytes_read {};
     stringstream message;
     const size_t maxMsgLen = 25;
     char chk, client_message[maxMsgLen];
-    talk = "Enter command and segment or type quit: \n";
+    const string talk = "Enter command and segment or type quit: \n";
     message << "Your handler id is " << std::this_thread::get_id() << '\n' << talk;
-    write(sock, message.str().c_str(), message.str().length());
+    write(socket_, message.str().c_str(), message.str().length());
     while( workable_ )
     {
-        if( (bytes_read = recv(sock, client_message, maxMsgLen, 0) > 0) )//recv returns size > 0 if OK
+        bytes_read = recv(socket_, client_message, maxMsgLen, 0);//recv returns -1 or 0 if not OK
+        if( bytes_read > 0) 
         {
             chk = client_message[0];
-            if (chk == 'q')
+            if (chk == 'q')//if quit asked
             {
                 killMeSoftly(answer_queue);
             }
             else
-            if (chk != 'q' and chk != 'r' and chk != 'm' and chk != 'f')//TODO change to enumeration
+            if (chk != 'q' and chk != 'r' and chk != 'm' and chk != 'f')
             {
-                error = "Bad input! Try rm[a,b], fn[a,b], mk[a;b] or q/quit.\n";
-                write(sock, error.c_str(), error.length());
+                const string error = "Bad input! Try rm[a,b], fn[a,b], mk[a;b] or q/quit.\n";
+                write(socket_, error.c_str(), error.length());
                 cout<<"Bad input cacthed!\n";
                 continue;           
             }
             else
             {
-                string string_message(client_message, client_message + bytes_read);
-                //HERE I NEED TO KNOW THE LENGHT OF CLIENT MESSAGE
-                cout<<"Message was: "<<string_message<<'\n';
-                
-                //ProcThread deletes used item created here://TODO get rid of pointers at all move items
-                WorkItem* item = new WorkItem(string_message, std::this_thread::get_id(), answer_queue);
-                queue_.add(item); //send the copy of a pointer to the WorkQueue
-                
-                const AnswerItem * answer = answer_queue.remove();//wait for answer
-                if( answer->getId() != std::this_thread::get_id() )
+                const string string_message(client_message, client_message + bytes_read);      
+                WorkItem item(string_message, std::this_thread::get_id(), answer_queue);
+                queue_.add(move(item));
+                //wait for answer while PCqueue::remove() makes this thread wait
+                AnswerItem answer(answer_queue.remove());
+                if( answer.getId() != std::this_thread::get_id() )
                 {
-                    error = "Error: not this listener's answer queue read! Closing connection!\n";
-                    write(sock, error.c_str(), error.length());
+                    const string error = "Error: not this listener's answer queue read! Closing connection!\n";
+                    write(socket_, error.c_str(), error.length());
                     cout<<"Connection: "<< std::this_thread::get_id() <<" read wrong answer queue! Closing...\n";
                     killMeSoftly(answer_queue);
                 }
                 else
                 {
-                    answ = answer->getMessage();//answer to the connetion:
-                    write(sock, answ.c_str(), answ.length());
+                    const string answ = answer.getMessage();//answer to the connetion:
+                    write(socket_, answ.c_str(), answ.length());
                 }
-                delete answer;
-                write(sock, talk.c_str(), talk.length());
+                write(socket_, talk.c_str(), talk.length());
             }
         memset(client_message, '\0', maxMsgLen);//clear char *
         }
         else
         {
-            error = "Error: server failed to recieve data. Closing...\n";
-            write(sock, error.c_str(), error.length());
+            const string error = "Error: server failed to recieve data. Closing...\n";
+            write(socket_, error.c_str(), error.length());
             cout<<"Connection: "<< std::this_thread::get_id() <<" failed to recieve data. Closing...\n";
             killMeSoftly(answer_queue);
         }

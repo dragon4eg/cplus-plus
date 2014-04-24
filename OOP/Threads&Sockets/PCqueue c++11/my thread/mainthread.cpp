@@ -1,40 +1,55 @@
 #include <thread>
 #include <mutex>
 #include <iostream>
+#include "PCqueue.h"
 using namespace std;
 
+
+class Foo
+{
+    
+public:
+    int i_;
+    Foo(int i = 5): i_(i){}
+    Foo(Foo&& other): i_(other.i_) { other.i_ = 0; }
+};
 
 class Functor
 {
 public:
-    Functor (int i): k_(i){}
+    Functor (PCqueue<Foo>&pcq, Foo f): pcq_(pcq), f_(f.i_){}
     void operator()(){ run(); }
 private:
-    void run() {  cout<<"I've started!\nk1 = "<<k_<<" k2 = "<<++k_<<'\n'; }
-    int k_;
-    //mutex mtx;
+    void run() {  pcq_.add(move(f_)); cout<<"I've started!"<<f_<<'\n'; }
+    int f_;
+    PCqueue<Foo>& pcq_;
+};
+
+
+class Functor2
+{
+public:
+    Functor2 (PCqueue<Foo>&pcq): pcq_(pcq){}
+    void operator()(){ run(); }
+private:
+    void run() { cout<<"Functor2: "<<(pcq_.remove()).i_<<'\n'; }
+    PCqueue<Foo>& pcq_;
 };
 
 const size_t number = 10;
-thread pool[number];
+thread prodpool[number];
+thread conspool[number];
 
 int main()
 {
-    char buf[10];
-    for (auto & i : buf)
-        i = 'a';
-    cout<<"Char *: "<<buf<<'\n';
-    string str(buf, buf + 9);
-    cout<<"String: "<<str<<'\n';
-
-    for (size_t i = 0; i<number; ++i)
-    {
-        pool[i] = thread(Functor(i));
-    }
-    for (size_t i = 0; i<number; ++i)
-    {
-        pool[i].join();
-    }
+    Foo f1;
+    PCqueue<Foo> pcq;
+    cout<<f1.i_<<'\n';
+        thread trd1(Functor(pcq, move(f1)));
+    cout<<f1.i_<<'\n';
+        thread trd2(Functor2(pcq));
+        trd1.join();
+        //trd2.join();
     return 0;
 }
 
