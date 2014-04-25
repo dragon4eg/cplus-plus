@@ -1,5 +1,6 @@
 //#include <netdb.h> //hostent
 #include <arpa/inet.h> //inet_addr
+#include <unistd.h>    //write, close
 #include "ProcThread.h"
 #include "Operations.h"
 #include "ListenManager.h"
@@ -9,11 +10,9 @@ using std::to_string;
 //static const size_t MACHINE_CORES = 4;
 
 //TODO THE ONLY thing left is to make proper killing of listen manager and consequently all listenerThreads from inside...
-//maybe we can fake send them "q_KILLME_"? not really from clients
+//maybe we can fake send them "q_KILLME_" to all from inside? not really from clients
 //TODO change getting a commant just by first letter of input, make some better way of distinguishing them like an enumeration
-//add moveConstructor to Segment and items
-//remove pointers everywhere even in Work and Ans Items
-// FIND A straaange BUG
+
 void showClientsInfo(const int & socket, sockaddr_in & client, const string & message)    //find out clients ip and port
 {
     string client_ip, info;
@@ -41,7 +40,7 @@ int main ()
     }
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_family = AF_INET;    
-    server.sin_port = htons( 8100 );//listening port for clients
+    server.sin_port = htons( 8103 );//listening port for clients
     if( bind(socket_desc,(sockaddr *)&server, sizeof(server)) < 0)
     {
         cout<<"Bind failed!!!\n"; // Why I always go here, what bind() really returns
@@ -55,16 +54,18 @@ int main ()
     cout<<"Waiting for incoming connections...\n";   
     c = sizeof(sockaddr_in);
     const string message = "Hello Client, I have received your connection.\n";
-//HERE WE GO...
+//HERE WE GO.............................................................................
     bool some_condition = true;//make a new thread-daemon that will work until condition
-    
+    int errors = 0, max_errors = 5;
     while( some_condition )
     {
         new_socket = accept(socket_desc, (sockaddr *)&client, (socklen_t*)&c);
         if (new_socket<0)
         {
-            cerr<<"Server internal error: accept failed! Terminating...\n";
-            break;
+            ++errors;
+            cerr<<"Server internal error: accept failed! #"<<errors<<'\n';
+            if (errors >= max_errors) break;
+            continue;
         }
         showClientsInfo(new_socket, client, message);
         ListenManager::instance().startNewListener(pcqueue, new_socket);//new threads

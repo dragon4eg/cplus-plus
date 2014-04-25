@@ -4,7 +4,7 @@
 using std::stoi;
 using std::min; 
 using std::max;
-using std::move;
+//using std::move;
 using std::string;
 using std::make_pair;
 using std::stringstream;
@@ -52,7 +52,7 @@ void Operations::make(const string & message, Segment & s, SegmentSet & db, PCqu
     db.insert(make_pair(s.length(), s));
     answer << "Segment added!\n";
     item.putMessage(answer.str());
-    ans_que.add(move(item));
+    ans_que.add(item);
 }
 /********************************/
 void Operations::remove(const string & message, Segment & s, SegmentSet & db, PCqueue< AnswerItem > & ans_que, const std::thread::id id)
@@ -67,7 +67,7 @@ void Operations::remove(const string & message, Segment & s, SegmentSet & db, PC
     {
         answer = "Empty set!\n";
         item.putMessage(answer);
-        ans_que.add(move(item));
+        ans_que.add(item);
         return;
     }
     if (db.find(key) != db.end())//search if there are with the same length
@@ -77,7 +77,7 @@ void Operations::remove(const string & message, Segment & s, SegmentSet & db, PC
     {
         answer = "There is no such segment!\n";
         item.putMessage(answer);
-        ans_que.add(move(item));
+        ans_que.add(item);
         return;
     }
     const auto iterpair = db.equal_range(key);
@@ -92,13 +92,13 @@ void Operations::remove(const string & message, Segment & s, SegmentSet & db, PC
             db.erase(i);
             answer = "Removed successfully!\n";
             item.putMessage(answer);
-            ans_que.add(move(item));
+            ans_que.add(item);
             return;
         }
     }
     answer = "Unfortunately, there is no such segment to erase. \n";
     item.putMessage(answer);
-    ans_que.add(move(item));
+    ans_que.add(item);
 }
 /********************************/
 void Operations::find(const string & message, Segment & s, SegmentSet & db, PCqueue< AnswerItem > & ans_que, const std::thread::id id)
@@ -113,7 +113,7 @@ void Operations::find(const string & message, Segment & s, SegmentSet & db, PCqu
     {
         answer << "Empty set!\n";
         item.putMessage(answer.str());
-        ans_que.add(move(item));
+        ans_que.add(item);
         return;
     }
     if (db.find(key) != db.end())//search if there are with the same length
@@ -129,10 +129,10 @@ void Operations::find(const string & message, Segment & s, SegmentSet & db, PCqu
         {
             answer << "There is no segment containing " << s << '\n';
             item.putMessage(answer.str());
-            ans_que.add(move(item));
+            ans_que.add(item);
             return;
         }
     }
     Operations::solve(s, db, iter, item);
-    ans_que.add(move(item));
+    ans_que.add(item);
 }

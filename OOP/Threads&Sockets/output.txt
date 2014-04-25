@@ -1,0 +1,14 @@
+g++ -std=c++11 -c main.cpp
+In file included from main.cpp:6:0:
+ListenManager.h: In constructor ‘PoolItem::PoolItem(std::thread&&)’:
+ListenManager.h:16:20: error: use of deleted function ‘std::thread::thread(std::thread&)’
+         stop_(false)
+                    ^
+In file included from AnswerItem.h:2:0,
+                 from WorkItem.h:2,
+                 from ProcThread.h:4,
+                 from main.cpp:4:
+/usr/include/c++/4.8/thread:125:5: error: declared here
+     thread(thread&) = delete;
+     ^
+make: *** [main.o] Error 1

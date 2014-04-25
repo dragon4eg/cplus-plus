@@ -12,16 +12,21 @@ public:
         id_(id), 
         ans_queue_(ans_queue) 
     { }
-    // move constructor
-    WorkItem (WorkItem && other):
+    WorkItem (const WorkItem & other): 
         message_(other.message_), 
-        id_(other.id_), 
+        id_(other.id_),
         ans_queue_(other.ans_queue_) 
-    {
-        message_ = "";
-        thread noexec; //make a default constructed thread to get non numeric id
-        id_ = noexec.get_id();
-    }
+    { }
+    // move constructor
+    //WorkItem (WorkItem && other):
+    //    message_(other.message_), 
+    //    id_(other.id_), 
+    //    ans_queue_(other.ans_queue_) 
+    //{
+    //    message_ = "";
+    //    thread noexec; //make a default constructed thread to get non numeric id
+    //    id_ = noexec.get_id();
+    //}
     const string getMessage() const { return message_; }
     const thread::id getId() const { return id_; }
     void putMessage(const string msg) { message_ = msg; }
