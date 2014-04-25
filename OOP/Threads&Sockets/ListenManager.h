@@ -15,10 +15,7 @@ public:
         thread_(tr),
         stop_(false)
     { }
-    PoolItem(PoolItem && other):
-        thread_(move(other.thread_)),
-        stop_(other.stop_)    
-    { }
+    PoolItem(PoolItem && other): thread_(move(other.thread_)), stop_(other.stop_) { }
     thread thread_;
     bool stop_;
 private:

@@ -32,7 +32,7 @@ void ListenThread::run()
     message << "Your handler id is " << myid << '\n' << talk;
     write(socket_, message.str().c_str(), message.str().length());
     auto stop_ptr = pool_.find(myid);
-    while( running_ or !(stop_ptr->second.second) )//second.second is stopppr = false, if true stop!
+    while( running_ or !(stop_ptr->second.stop_) )//second.second is stopppr = false, if true stop!
     {
         bytes_read = recv(socket_, client_message, maxMsgLen, 0);//recv returns -1 or 0 if not OK
         if( bytes_read > 0) 
