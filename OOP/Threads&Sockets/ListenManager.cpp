@@ -19,7 +19,7 @@ void ListenManager::startNewListener (PCqueue< WorkItem > & wq, const int sock)
 {
     lock_guard< mutex > lock(mutex_);
     thread listener (ListenThread(wq, sock, pool_));
-    PoolItem item(move(listener), false);
+    PoolItem item(move(listener));
     thread::id id = item.thread_.get_id();
     pool_.emplace(id, move(item) );
     //all good with new keys in a map, thread move constructor rules
