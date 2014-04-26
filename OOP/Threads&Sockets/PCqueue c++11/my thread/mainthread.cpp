@@ -17,11 +17,12 @@ void dostuff (const int & socket_)
     stringstream message;
     const size_t maxMsgLen = 25;
     char chk, client_message[maxMsgLen];
-    const string talk = "Enter command and segment or type quit: \n";
+    const string talk = "Enter q: \n";
     const thread::id myid = std::this_thread::get_id();
     message << "Your handler id is " << myid << '\n' << talk;
     write(socket_, message.str().c_str(), message.str().length());
-    while( true  )
+    bool cond = true;
+    while( cond )
     {
         bytes_read = recv(socket_, client_message, maxMsgLen, 0);//recv returns -1 or 0 if not OK
         if( bytes_read > 0) 
@@ -32,12 +33,15 @@ void dostuff (const int & socket_)
         }
         else
         {
-            cout<<"WOHOO ERROR!!\n";
+            const string down = "Server is being shutting down...\n";
+            write(socket_, down.c_str(), down.length());
+            cout<<down;
+            cond = false;
         }
     }
 }
 
-void * startListen(const int & socket_desc, sockaddr_in & client, const int & c)
+void startListen(const int & socket_desc, const sockaddr_in & client, const int & c)
 {
     int new_socket;
     new_socket = accept(socket_desc, (sockaddr *)&client, (socklen_t*)&c);
@@ -46,15 +50,17 @@ void * startListen(const int & socket_desc, sockaddr_in & client, const int & c)
     string ans = "";
     cin>>ans;
     if (ans == "y") 
-    { 
-        close (new_socket); 
+    {   
+        shutdown (new_socket, SHUT_RD);
     }
-    return NULL;
+    listener.join();
+    sleep(3);
+    cout<<"Done!\n";
 }
 
 int main ()
 {
-/*******************************Prepare Socket******************************************/    
+/*******************************Prepare Socket******************************************/   
     int socket_desc, c;
     sockaddr_in server, client;
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);
@@ -64,7 +70,7 @@ int main ()
     }
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_family = AF_INET;    
-    server.sin_port = htons( 8103 );//listening port for clients
+    server.sin_port = htons( 8659 );//listening port for clients
     if( bind(socket_desc,(sockaddr *)&server, sizeof(server)) < 0)
     {
         cout<<"Bind failed!!!\n"; // Why I always go here, what bind() really returns
@@ -80,7 +86,7 @@ int main ()
     const string message = "Hello Client, I have received your connection.\n";
 //HERE WE GO.............................................................................
     thread serv(startListen, socket_desc, client, c);
-
+    
 /*************************************************************************************/
     serv.join();
     close(socket_desc);

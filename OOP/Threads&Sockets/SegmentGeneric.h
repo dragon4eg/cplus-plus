@@ -3,7 +3,6 @@
 #include <string>
 #include <iostream>
 
-
 template< typename TPoint, const double (*DistanceFunction)(const TPoint&, const TPoint&) >
 class SegmentGeneric
 {
@@ -45,5 +44,4 @@ std::ostream & operator<<(std::ostream & os, const SegmentGeneric< TPoint, Dista
     os << static_cast< std::string >(s);
     return os;
 }
-
 

@@ -6,30 +6,16 @@
 #include <thread>
 using std::thread;
 using std::map;
-using std::pair;
 
-class PoolItem
-{
-public:
-    PoolItem(thread && tr):
-        thread_(tr),
-        stop_(false)
-    { }
-    PoolItem(PoolItem && other): thread_(move(other.thread_)), stop_(other.stop_) { }
-    thread thread_;
-    bool stop_;
-private:
-};
+typedef map< const thread::id, thread > Pool;
 
-
-typedef map< const thread::id, PoolItem > Pool;
-
-class ListenManager //Meyers' singleton
+class ListenManager
 {
 public:
     static ListenManager & instance();
-    void startNewListener (PCqueue< WorkItem > & wq, const int sock);
+    void startNewListener (PCqueue< WorkItem > & wq, const int & sock);
     void deleteListener(const thread::id keyid);
+    void closeAll();
     ~ListenManager();
 private:
     ListenManager() { }
@@ -38,3 +24,4 @@ private:
     Pool pool_;
     mutex mutex_;
 };
+

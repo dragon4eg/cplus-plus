@@ -4,11 +4,10 @@
 using std::stoi;
 using std::min; 
 using std::max;
-//using std::move;
 using std::string;
 using std::make_pair;
 using std::stringstream;
-/*********************************Operations auxiliary****************************************/
+
 void Operations::parseAndInit(const string & message, Segment & s)
 {
     //incoming format <"fn"/"mk"/"rm">[3;4] or "quit" mk[3;5]
@@ -20,7 +19,6 @@ void Operations::parseAndInit(const string & message, Segment & s)
     s.start() = min (a, b); //Lets hold points of Segment ordered
     s.end() = max (a, b);
 }
-
 void Operations::solve(const Segment & s, const SegmentSet & db, SegmentSet::iterator iter, AnswerItem & item)
 {
     stringstream answer;
@@ -42,7 +40,6 @@ void Operations::solve(const Segment & s, const SegmentSet & db, SegmentSet::ite
     answer <<"There is no segment...\n";
     item.putMessage(answer.str());
 }
-/*********************************Operations main***********************************************/
 void Operations::make(const string & message, Segment & s, SegmentSet & db, PCqueue< AnswerItem > & ans_que, const std::thread::id id)
 {
     AnswerItem item;
@@ -54,7 +51,6 @@ void Operations::make(const string & message, Segment & s, SegmentSet & db, PCqu
     item.putMessage(answer.str());
     ans_que.add(item);
 }
-/********************************/
 void Operations::remove(const string & message, Segment & s, SegmentSet & db, PCqueue< AnswerItem > & ans_que, const std::thread::id id)
 {
     Operations::parseAndInit(message, s);
@@ -100,7 +96,6 @@ void Operations::remove(const string & message, Segment & s, SegmentSet & db, PC
     item.putMessage(answer);
     ans_que.add(item);
 }
-/********************************/
 void Operations::find(const string & message, Segment & s, SegmentSet & db, PCqueue< AnswerItem > & ans_que, const std::thread::id id)
 {
     Operations::parseAndInit(message, s);
@@ -136,3 +131,4 @@ void Operations::find(const string & message, Segment & s, SegmentSet & db, PCqu
     Operations::solve(s, db, iter, item);
     ans_que.add(item);
 }
+
