@@ -7,9 +7,6 @@ using std::to_string;
 using std::cout;
 void Daemon::operator()()
 {
-    SegmentSet db;
-    PCqueue<WorkItem>  pcqueue;
-    thread processor_thread(ProcThread(pcqueue, db));
     int  new_socket, c; 
     size_t max_errors = 5;//MAX NUMBERS OF ERRORS INDICATING THAT EITHER WE'VE GOT 
     //PROBLEMS WITH CONNECTION (so we can't work) OR WE'RE FORCEFULLY SHUTING DOWN
@@ -20,12 +17,15 @@ void Daemon::operator()()
     server.sin_port = htons( port_ );//listening port taken from main()
     if( bind(main_socket_,(sockaddr *)&server, sizeof(server)) < 0)
     {
-        cout<<"Bind failed!!!Run again or enter another port [1...65535].\n";
+        cout<<"Bind failed!!!Run again and enter another port [1...65535].\n";
         return;
     }
     else
         cout<<"Bind done\n";
     listen(main_socket_, 3); //3 defines the maximum number of pending connections
+    SegmentSet db;
+    PCqueue<WorkItem> pcqueue;
+    thread processor_thread(ProcThread(pcqueue, db));
     cout<<"Waiting for incoming connections...\n";
     c = sizeof(sockaddr_in);
     const string message = "Hello Client, I have received your connection.\n";

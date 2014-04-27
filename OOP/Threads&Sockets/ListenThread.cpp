@@ -45,7 +45,7 @@ void ListenThread::run()
             {
                 if (chk != 'q' and chk != 'r' and chk != 'm' and chk != 'f')
                 {
-                    const string error = "Bad input! Try rm[a,b], fn[a,b], mk[a;b] or q/quit.\n";
+                    const string error = "Bad input! Try rm[a;b], fn[a;b], mk[a;b] or q/quit.\n";
                     write(socket_, error.c_str(), error.length());
                     cout<<"Bad input cacthed!\n";
                     continue;           

@@ -60,7 +60,7 @@ void startListen(const int & socket_desc, const sockaddr_in & client, const int 
 
 int main ()
 {
-/*******************************Prepare Socket******************************************/   
+    cout<<stoi("1a2s3sa")<<'\n';  
     int socket_desc, c;
     sockaddr_in server, client;
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);

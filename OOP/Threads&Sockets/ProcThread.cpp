@@ -12,6 +12,7 @@ ProcThread::ProcThread(PCqueue< WorkItem > & queue, SegmentSet & db ) :
     stop_(false)
 { }
 //TODO check if that was the Daemon who asked us to stop (with adding to ProcThread the daemon_id& as member)
+//this is not needed untill we don't have proper user commands starting with '_'
 const bool ProcThread::mayIDie(const string & msg, PCqueue< AnswerItem > & ans_queue, const std::thread::id id)
 {
     if (msg == "__KILL_SERVER__INSTRUCTION__\n")
@@ -19,7 +20,7 @@ const bool ProcThread::mayIDie(const string & msg, PCqueue< AnswerItem > & ans_q
         stop_ = true;
         AnswerItem item;
         item.putId(id);//security chek
-        const string answer = "Processor is stopping...\n";
+        const string answer = "Processor is stopped!\n";
         item.putMessage(answer);
         ans_queue.add(item);
         return true;
@@ -59,7 +60,6 @@ void ProcThread::run()
                 break;
         }    
     }
-    cout<<"Processor stopped!\n";
 }
 
 
