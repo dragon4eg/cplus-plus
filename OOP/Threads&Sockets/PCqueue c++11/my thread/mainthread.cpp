@@ -5,6 +5,8 @@
 #include <cstring>
 #include <sstream>
 #include <thread>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>	//write, close socket
 #include <sys/socket.h>
 using namespace std;
@@ -60,10 +62,8 @@ void startListen(const int & socket_desc, const sockaddr_in & client, const int 
 
 int main ()
 {
-    string a = "abcdefghij" + "asdfasdasdasd";
-    string b = a.substr(6,15);
-    cout<<a+b<<"|\n";
-    cout<<stoi("1a2s3sa")<<"|\n";  
+    string strint = to_string(-12341);
+    cout<<strint<<", length "<<strint.length();
     int socket_desc, c;
     sockaddr_in server, client;
     socket_desc = socket(AF_INET, SOCK_STREAM, 0);

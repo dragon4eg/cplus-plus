@@ -9,6 +9,7 @@ using std::cout;
 using std::string;
 using std::make_pair;
 using std::stringstream;
+using std::to_string;
 
 const bool Operations::isDbEmpty(const SegmentSet & db, AnswerItem & item, PCqueue< AnswerItem > & ans_que)
 {
@@ -68,11 +69,22 @@ const bool Operations::parseAndInit(const string & message, Segment & s, AnswerI
     {
         a = stoi (tmp1);
         b = stoi (tmp2);
+        if ((to_string(a).length() < tmp1.length()) or (to_string(b).length() < tmp2.length()))
+        {
+            throw string("bad numers entered!");
+        }
     }
     catch ( const std::invalid_argument & except )
     {
         cout<<"Exception (invalid_argument) catched! "<<except.what()<<'\n';
         answer = "Not a proper numeric parameter! Try rm[a;b], fn[a;b], mk[a;b] or q/quit.\n";
+        item.putMessage(answer);
+        return false;
+    }
+    catch ( const string & badnum )
+    {
+        cout<<"Exception catched! "<< badnum <<'\n';
+        answer = "Bad numbers in parameter! Try rm[a;b], fn[a;b], mk[a;b] or q/quit.\n";
         item.putMessage(answer);
         return false;
     }
