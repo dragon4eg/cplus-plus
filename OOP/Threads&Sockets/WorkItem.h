@@ -37,3 +37,4 @@ private:
     thread::id               id_;
     PCqueue< AnswerItem > & ans_queue_;
 };
+

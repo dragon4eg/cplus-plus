@@ -23,7 +23,7 @@ void ListenThread::run()
     PCqueue< AnswerItem > answer_queue;// create my own anser queue
     int bytes_read {};
     stringstream message;
-    const size_t maxMsgLen = 25;
+    const size_t maxMsgLen = 50;
     char chk, client_message[maxMsgLen];
     const thread::id myid = std::this_thread::get_id();
     stringstream talk;
@@ -97,3 +97,4 @@ void ListenThread::run()
         //}
     }
 }
+

@@ -33,3 +33,4 @@ private:
     string        message_;
     thread::id    id_;
 };
+

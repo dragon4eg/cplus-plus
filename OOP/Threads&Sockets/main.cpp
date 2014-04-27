@@ -1,6 +1,5 @@
 #include "Daemon.h"
 #include <iostream>
-
 using std::cin;
 using std::cout;
 //TODO change getting a commant just by first letter of input, 
@@ -48,6 +47,4 @@ int main ( int argc, char *argv[] )
     }     
     return 0;
 }
-
-
 

@@ -15,7 +15,7 @@ void ListenManager::startNewListener (PCqueue< WorkItem > & wq, const int & sock
     lock_guard< mutex > lock(mutex_);
     thread listener(ListenThread(wq, sock));
     thread::id id = listener.get_id();
-    pool_.emplace(id, move(listener) );
+    pool_.emplace(id, move(listener));
 }
 void ListenManager::deleteListener(const thread::id keyid)
 {

@@ -47,9 +47,9 @@ const bool Operations::parseAndInit(const string & message, Segment & s, AnswerI
     const size_t lbrace = message.find('[');
     const size_t rbrace = message.find(']');
     const size_t delimiter = message.find(';');
-    if (lbrace == std::string::npos or rbrace == std::string::npos or delimiter == std::string::npos)
+    if (lbrace == std::string::npos or rbrace == std::string::npos or delimiter == std::string::npos or rbrace != message.length() - 1)
     {
-        answer = "No brace or delimiter ';' found! Try rm[a;b], fn[a;b], mk[a;b] or q/quit.\n";
+        answer = "Bad input! Try h/help q/quit.\n";
         item.putMessage(answer);
         return false;
     }
@@ -57,47 +57,35 @@ const bool Operations::parseAndInit(const string & message, Segment & s, AnswerI
     {
         tmp1 = message.substr(lbrace + 1, delimiter - lbrace - 1);
         tmp2 = message.substr(delimiter + 1, rbrace - delimiter - 1);
-    }
-    catch (std::bad_alloc& ba)//we can't have out_of_range may be + string exception
-    {
-        cout<<"Exception (bad_alloc) catched! "<<ba.what()<<'\n';
-        answer = "Cant process! Try rm[a;b], fn[a;b], mk[a;b] or q/quit.\n";
-        item.putMessage(answer);
-        return false;
-    }
-    try
-    {
         a = stoi (tmp1);
         b = stoi (tmp2);
         if ((to_string(a).length() < tmp1.length()) or (to_string(b).length() < tmp2.length()))
         {
             throw string("bad numers entered!");
         }
+        s.start() = min (a, b); //Lets hold points of Segment ordered
+        s.end() = max (a, b);
+        return true;
     }
     catch ( const std::invalid_argument & except )
     {
         cout<<"Exception (invalid_argument) catched! "<<except.what()<<'\n';
         answer = "Not a proper numeric parameter! Try rm[a;b], fn[a;b], mk[a;b] or q/quit.\n";
         item.putMessage(answer);
-        return false;
     }
     catch ( const string & badnum )
     {
         cout<<"Exception catched! "<< badnum <<'\n';
         answer = "Bad numbers in parameter! Try rm[a;b], fn[a;b], mk[a;b] or q/quit.\n";
         item.putMessage(answer);
-        return false;
     }
     catch ( const std::out_of_range& oor )
     {
         cout<<"Exception (out_of_range) catched! "<<oor.what()<<'\n';
         answer = "Out of range numeric parameter! Try rm[a;b], fn[a;b], mk[a;b] or q/quit.\n";
         item.putMessage(answer);
-        return false;
     }
-    s.start() = min (a, b); //Lets hold points of Segment ordered
-    s.end() = max (a, b);
-    return true;
+    return false;
 }
 void Operations::solve(const Segment & s, const SegmentSet & db, SegmentSet::iterator iter, AnswerItem & item)
 {
