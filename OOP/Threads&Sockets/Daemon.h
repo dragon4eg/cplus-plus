@@ -27,6 +27,6 @@ private:
     bool                      stop_;
     int                       main_socket_;
     vector<int>               socket_pool_;   
-    void showClientsInfo(const int & socket, sockaddr_in & client, const string & message);
+    void showClientsInfo(const int & socket, sockaddr_in & client);
 };     
 

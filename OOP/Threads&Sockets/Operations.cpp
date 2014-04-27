@@ -17,9 +17,9 @@ const bool Operations::isDbEmpty(const SegmentSet & db, AnswerItem & item, PCque
         const string answer = "Empty set!\n";
         item.putMessage(answer);
         ans_que.add(item);
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 SegmentSet::const_iterator Operations::findSameSegment(const SegmentSet & db, Segment & s)
 {
@@ -57,7 +57,7 @@ const bool Operations::parseAndInit(const string & message, Segment & s, AnswerI
         tmp1 = message.substr(lbrace + 1, delimiter - lbrace - 1);
         tmp2 = message.substr(delimiter + 1, rbrace - delimiter - 1);
     }
-    catch (std::bad_alloc& ba)//we can't have out_of_range
+    catch (std::bad_alloc& ba)//we can't have out_of_range may be + string exception
     {
         cout<<"Exception (bad_alloc) catched! "<<ba.what()<<'\n';
         answer = "Cant process! Try rm[a;b], fn[a;b], mk[a;b] or q/quit.\n";

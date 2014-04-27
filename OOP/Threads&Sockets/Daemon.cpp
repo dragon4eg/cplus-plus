@@ -3,8 +3,10 @@
 #include "ListenManager.h"
 #include <thread>
 #include <iostream>
+#include <sstream>
 using std::to_string;
 using std::cout;
+using std::stringstream;
 void Daemon::operator()()
 {
     int  new_socket, c; 
@@ -28,7 +30,7 @@ void Daemon::operator()()
     thread processor_thread(ProcThread(pcqueue, db));
     cout<<"Waiting for incoming connections...\n";
     c = sizeof(sockaddr_in);
-    const string message = "Hello Client, I have received your connection.\n";
+
     size_t error_counter = 0;
     while( !stop_ )
     {
@@ -48,7 +50,7 @@ void Daemon::operator()()
         else
         {
             socket_pool_.push_back(new_socket);//put socket into a pool, so we could shut id down in Manager
-            showClientsInfo(new_socket, client, message);
+            showClientsInfo(new_socket, client);
             ListenManager::instance().startNewListener(pcqueue, new_socket);//starting thread per connection
         }
     }
@@ -57,15 +59,17 @@ void Daemon::operator()()
     db.clear();
 }
 //find out clients ip and port
-void Daemon::showClientsInfo(const int & socket, sockaddr_in & client, const string & message)
+void Daemon::showClientsInfo(const int & socket, sockaddr_in & client)
 {
     string client_ip, info;
     int client_port;
+    stringstream message;
     cout<<"Connection accepted!\n";
     client_ip = inet_ntoa(client.sin_addr);
     client_port = ntohs(client.sin_port);
-    info = message + "Your ip is: " + client_ip + " port: " + to_string(client_port) + '\n';
-    write(socket, info.c_str(), info.length());
+    message << "Hello Client, I have received your connection.\n"
+    << "Your ip is: " << client_ip << " port: " << to_string(client_port) << '\n';
+    write(socket, message.str().c_str(), message.str().length());
     cout<<"Clients ip is: "<<client_ip<<" port: "<<client_port<<'\n';
 }
 //close all sockets and set condition for Daemon's loop to stop

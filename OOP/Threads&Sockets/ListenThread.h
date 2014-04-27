@@ -2,7 +2,18 @@
 #include "WorkItem.h"
 #include <unistd.h>    //write, close
 #include <iostream>
+#include <sstream>
 using std::cout;
+using std::stringstream;
+
+static const string help = "\
+Usage:     command <parameter>\n\
+Commands:  mk - make new segment;\n\
+           rm - remove existing;\n\
+           fn - find the one including parameter;\n\
+           h  - help;\n\
+           q  - quit;\n\
+Parameter: [a;b], where a, b - integers;\n";
 
 class ListenThread
 {
