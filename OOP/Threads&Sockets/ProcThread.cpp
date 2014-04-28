@@ -15,7 +15,7 @@ ProcThread::ProcThread(PCqueue< WorkItem > & queue, SegmentSet & db ) :
 //this is not needed untill we don't have proper user commands starting with '_'
 const bool ProcThread::mayIDie(const string & msg, PCqueue< AnswerItem > & ans_queue, const std::thread::id id)
 {
-    if (msg == "__KILL_SERVER__INSTRUCTION__\n")
+    if (msg == "__KILL_PROCESSING_THREAD__")
     {
         stop_ = true;
         AnswerItem item;
@@ -25,6 +25,7 @@ const bool ProcThread::mayIDie(const string & msg, PCqueue< AnswerItem > & ans_q
         ans_queue.add(item);
         return true;
     }
+    cout<<"Bad instruction, processing thread left alive! Memory cleared! All sockets closed! Use CTRL+C.\n";
     return false;
 }
 
@@ -42,7 +43,7 @@ void ProcThread::run()
         const auto listener_id = item.getId();
         mutex mtx; mtx.lock();
         cout<<"Processor: "<<std::this_thread::get_id()<<" on loop "<<i<<", got one item:\n";
-        cout<<"message: "<<msg<<"from connection: "<<listener_id<<'\n';
+        cout<<"message: "<<msg<<'\n'<<"from connection: "<<listener_id<<'\n';
         mtx.unlock();
         switch (msg[0])
         {

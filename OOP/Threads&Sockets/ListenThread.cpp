@@ -13,7 +13,7 @@ void ListenThread::killMeSoftly(PCqueue< AnswerItem > & answer_queue, const std:
     running_ = false;
     cout<<"Connection: "<< myid <<" is closing.\n";
     stringstream message;
-    message << "quit\n";
+    message << "quit";
     WorkItem item(message.str(), myid, answer_queue);
     queue_.add(item);
 }
@@ -36,7 +36,7 @@ void ListenThread::run()
         bytes_read = recv(socket_, client_message, maxMsgLen, 0);//recv returns -1 or 0 if not OK
         if( bytes_read > 0) 
         {
-            cout<<"Bytes read: "<<bytes_read<<'\n';//even empty message will have 2 bytes (return symbol)
+            cout<<"Real bytes read: "<<bytes_read<<'\n';//even empty message will have 2 bytes (return symbol)
             chk = client_message[0];
             if (chk == 'q')//if quit asked
             {
@@ -58,8 +58,8 @@ void ListenThread::run()
                         cout<<"Help request cacthed!\n";
                     }
                     else
-                    {
-                        const string string_message(client_message, client_message + bytes_read);      
+                    {   //-2, because telnet always appends 2 more bytes when return pressed
+                        const string string_message(client_message, client_message + bytes_read - 2 );      
                         WorkItem item(string_message, myid, answer_queue);
                         queue_.add(item);
                         //wait for answer while PCqueue::remove() makes this thread wait
@@ -84,9 +84,9 @@ void ListenThread::run()
         }
         else//we are here when the whole server is shutting down and ask Manager to kill us
         {
-            const string down = "Server is being shutting down...\n";
+            const string down = "\nServer is being shutting down...\n";
             write(socket_, down.c_str(), down.length());
-            cout<<"Socket: "<<socket_<<" was shut down!";
+            cout<<"Listener: "<<socket_<<"socket was shut down!";
             running_ = false;
         }
         //TODO find out which error i'm forcing, and handle other real ERRNOs of 

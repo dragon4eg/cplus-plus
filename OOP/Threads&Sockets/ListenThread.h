@@ -37,7 +37,7 @@ public:
         if (socket_ != -1 )//if not spoiled by move constructor
         {
             close(socket_);
-            cout<<"Connection on socket "<<socket_<<" destroyed!\n";
+            cout<<"Listener on socket"<<socket_<<" destroyed!\n";
         }
     }
 private:

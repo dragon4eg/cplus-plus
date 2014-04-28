@@ -67,8 +67,8 @@ void Daemon::showClientsInfo(const int & socket, sockaddr_in & client)
     cout<<"Connection accepted!\n";
     client_ip = inet_ntoa(client.sin_addr);
     client_port = ntohs(client.sin_port);
-    message << "Hello Client, I have received your connection.\n"
-    << "Your ip is: " << client_ip << " port: " << to_string(client_port) << '\n';
+    message << "Hello Client, use 'h' for help.\n" << 
+    "Your ip is: " << client_ip << " port: " << to_string(client_port) << '\n';
     write(socket, message.str().c_str(), message.str().length());
     cout<<"Clients ip is: "<<client_ip<<" port: "<<client_port<<'\n';
 }
@@ -83,7 +83,7 @@ void Daemon::shutSocketsDown()
 void Daemon::stopProcessing(PCqueue< WorkItem > & pcqueue)
 {
     PCqueue< AnswerItem > answer_queue;// create my own anser queue
-    const string lastmsg = "__KILL_SERVER__INSTRUCTION__\n";
+    const string lastmsg = "__KILL_PROCESSING_THREAD__";
     WorkItem item(lastmsg, std::this_thread::get_id(), answer_queue);
     pcqueue.add(item);
     AnswerItem answer = answer_queue.remove();

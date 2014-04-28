@@ -42,6 +42,7 @@ int main ( int argc, char *argv[] )
                 while (command != "kill");
                 shutdown(main_socket, SHUT_RDWR);//SHUT_RDWR Disables further send and receive operations
                 daemon.join();// me in death))
+                cout<<"Server was succesfully shut down!\n";
             }
         }   
     }     

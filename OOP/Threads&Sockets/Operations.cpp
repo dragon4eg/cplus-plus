@@ -47,8 +47,8 @@ const bool Operations::parseAndInit(const string & message, Segment & s, AnswerI
     const size_t lbrace = message.find('[');
     const size_t rbrace = message.find(']');
     const size_t delimiter = message.find(';');
-    if (lbrace == std::string::npos or rbrace == std::string::npos or delimiter == std::string::npos or rbrace != (message.length() - 3))
-    {                                                    //-3 but not -1, because telnet always appends 2 more bytes when return pressed
+    if (lbrace == std::string::npos or rbrace == std::string::npos or delimiter == std::string::npos or rbrace != (message.length() - 1))
+    {                                                    
         answer = "Parser: Bad input! Try h/help.\n";
         item.putMessage(answer);
         return false;
