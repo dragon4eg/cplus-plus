@@ -62,6 +62,9 @@ void startListen(const int & socket_desc, const sockaddr_in & client, const int 
 
 int main ()
 {
+    string testmessage("mk[234;554]");
+    const size_t rbrace = testmessage.find(']');
+    cout<<"length " << testmessage.length() << "rbrace pos "<<rbrace<<'\n';
     string strint = to_string(-12341);
     cout<<strint<<", length "<<strint.length();
     int socket_desc, c;

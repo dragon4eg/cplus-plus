@@ -36,6 +36,7 @@ void ListenThread::run()
         bytes_read = recv(socket_, client_message, maxMsgLen, 0);//recv returns -1 or 0 if not OK
         if( bytes_read > 0) 
         {
+            cout<<"Bytes read: "<<bytes_read<<'\n';//even empty message will have 2 bytes (return symbol)
             chk = client_message[0];
             if (chk == 'q')//if quit asked
             {
@@ -43,9 +44,9 @@ void ListenThread::run()
             }
             else
             {
-                if (chk != 'q' and chk != 'h' and chk != 'r' and chk != 'm' and chk != 'f')
+                if (chk != 'q' and chk != 'h' and chk != 'r' and chk != 'm' and chk != 'f' and chk != 'G')
                 {
-                    const string error = "Bad input! \n";
+                    const string error = "Listener: Bad input! Try h/help\n";
                     write(socket_, error.c_str(), error.length());
                     cout<<"Bad input cacthed!\n";          
                 }
